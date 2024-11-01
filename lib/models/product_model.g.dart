@@ -36,13 +36,14 @@ class ProductModelAdapter extends TypeAdapter<ProductModel> {
       unitPrice: fields[15] as double,
       pricePerBlister: fields[16] as double?,
       pricePerPack: fields[17] as double?,
+      imageUrl: fields[19] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, ProductModel obj) {
     writer
-      ..writeByte(19)
+      ..writeByte(20)
       ..writeByte(0)
       ..write(obj.name)
       ..writeByte(1)
@@ -80,7 +81,9 @@ class ProductModelAdapter extends TypeAdapter<ProductModel> {
       ..writeByte(17)
       ..write(obj.pricePerPack)
       ..writeByte(18)
-      ..write(obj.barcode);
+      ..write(obj.barcode)
+      ..writeByte(19)
+      ..write(obj.imageUrl);
   }
 
   @override

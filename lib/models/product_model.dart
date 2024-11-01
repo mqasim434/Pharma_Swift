@@ -62,6 +62,9 @@ class ProductModel extends HiveObject {
   @HiveField(18)
   String? barcode; // Price per pack (optional)
 
+  @HiveField(19)
+  String? imageUrl;
+
   ProductModel({
     required this.name,
     required this.type,
@@ -82,6 +85,6 @@ class ProductModel extends HiveObject {
     required this.unitPrice,
     this.pricePerBlister,
     this.pricePerPack,
+    this.imageUrl
   });
-
 }

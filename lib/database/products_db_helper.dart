@@ -4,7 +4,8 @@ import 'package:pharmacy_pos/models/product_model.dart';
 import 'db_helper.dart';
 
 class ProductsDBController extends GetxController {
-  final Box<ProductModel> _productsBox = Hive.box<ProductModel>(DBHelper.productBoxName);
+  final Box<ProductModel> _productsBox =
+      Hive.box<ProductModel>(DBHelper.productBoxName);
 
   /// RxList to hold products reactively
   var products = <ProductModel>[].obs;
@@ -27,15 +28,38 @@ class ProductsDBController extends GetxController {
   }
 
   /// Update a product by index
-  Future<void> updateProduct(int index, ProductModel updatedProduct) async {
-    await _productsBox.putAt(index, updatedProduct);
-    loadProducts(); // Refresh the list
+  Future<void> updateProductByName(String id, ProductModel updatedProduct) async {
+
+    // Find the index of the product by name
+    int index = _productsBox.values.toList().indexWhere((product) => product.name == id);
+
+    // If the product is found, update it
+    if (index != -1) {
+      await _productsBox.putAt(index, updatedProduct);
+    } else {
+      // Handle the case where the product was not found
+      throw Exception('Product not found');
+    }
   }
 
-  /// Delete a product by index
-  Future<void> deleteProduct(int index) async {
-    await _productsBox.deleteAt(index);
-    loadProducts(); // Refresh the list
+  Future<void> deleteProductById(String id) async {
+    try {
+      // Find the product by comparing the id
+      final productKey = _productsBox.keys.firstWhere(
+        (key) => _productsBox.get(key)?.name == id,
+        orElse: () => null,
+      );
+
+      if (productKey != null) {
+        await _productsBox.delete(productKey);
+        loadProducts();
+        print("Product with ID $id deleted successfully.");
+      } else {
+        print("Product with ID $id not found.");
+      }
+    } catch (e) {
+      print("An error occurred while deleting the product: $e");
+    }
   }
 
   /// Delete all products

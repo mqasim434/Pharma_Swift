@@ -1,10 +1,10 @@
 // ignore_for_file: prefer_const_constructors, must_be_immutable
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:pharmacy_pos/components/file_upload_widget.dart';
+import 'package:pharmacy_pos/database/products_db_helper.dart';
 import 'package:pharmacy_pos/models/product_model.dart';
 import 'package:pharmacy_pos/utils/colors.dart';
 
@@ -42,7 +42,18 @@ class _AddProductDialogueState extends State<AddProductDialogue> {
     String? selectedCategory;
     DateTime? expiryDate;
 
-    final List<String> categories = ['Syrup', 'Pill', 'Capsule', 'Injection'];
+    Get.put<ProductsDBController>(ProductsDBController());
+    var productsController = Get.find<ProductsDBController>();
+
+    final List<String> categories = [
+      'Pills',
+      'Syrups',
+      'Capsules',
+      'Injections'
+    ];
+
+    String? selectedImage;
+
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     return AlertDialog(
@@ -160,7 +171,10 @@ class _AddProductDialogueState extends State<AddProductDialogue> {
                                       child: Text(category),
                                     );
                                   }).toList(),
-                                  onChanged: (value) {},
+                                  onChanged: (value) {
+                                    selectedCategory = value.toString();
+                                    setState(() {});
+                                  },
                                 ),
                               ),
                             ],
@@ -250,7 +264,13 @@ class _AddProductDialogueState extends State<AddProductDialogue> {
                       SizedBox(
                           height: 150,
                           width: screenWidth * 0.22,
-                          child: FileUploadWidget())
+                          child: FileUploadWidget(
+                            onFilesSelected: (value) {
+                              setState(() {
+                                selectedImage = value.first.path;
+                              });
+                            },
+                          ))
                     ],
                   )),
                 ],
@@ -261,20 +281,22 @@ class _AddProductDialogueState extends State<AddProductDialogue> {
               ElevatedButton(
                 onPressed: () {
                   ProductModel productModel = ProductModel(
-                    name: titleController.text,
-                    type: selectedCategory.toString(),
-                    formula: formulaController.text,
-                    vendor: vendorController.text,
-                    expiryDate: expiryDate as DateTime,
-                    batchNumber: bactchNoController.text,
-                    rackNo: rackNoController.text,
-                    unitPrice: double.parse(unitPriceController.text),
-                    barcode: barcodeController.text,
-                    blistersPerPack: int.parse(blisterPriceController.text),
-                    availableUnits: int.parse(unitsPerPack.text),
-                    unitsPerBlister: int.parse(unitsPerBlisterController.text),
-                  );
-                  Navigator.pop(context); // Close the dialog
+                      name: titleController.text,
+                      type: selectedCategory.toString(),
+                      formula: formulaController.text,
+                      vendor: vendorController.text,
+                      expiryDate: expiryDate as DateTime,
+                      batchNumber: bactchNoController.text,
+                      rackNo: rackNoController.text,
+                      unitPrice: double.parse(unitPriceController.text),
+                      barcode: barcodeController.text,
+                      blistersPerPack: int.parse(blisterPriceController.text),
+                      availableUnits: int.parse(unitsPerPack.text),
+                      unitsPerBlister: 0,
+                      imageUrl: selectedImage);
+                  productsController.addProduct(productModel).then((value) {
+                    Navigator.pop(context);
+                  });
                 },
                 style: ElevatedButton.styleFrom(
                   minimumSize: Size(screenWidth * 0.4, 50),
