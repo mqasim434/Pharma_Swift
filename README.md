@@ -48,7 +48,7 @@ Pharma Swift is a comprehensive pharmacy management system designed to streamlin
 ---
 
 ## **Screenshots**
-_Add screenshots here to showcase the interface and features._
+![Release-1-sc](https://github.com/user-attachments/assets/a7a6d4cc-0e65-4737-9162-cc742867051c)
 
 ---
 
