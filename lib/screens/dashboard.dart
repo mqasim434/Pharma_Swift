@@ -15,13 +15,15 @@ class Dashboard extends StatelessWidget {
     return Row(
       children: [
         // Sidebar should not be wrapped in Obx as a whole; only specific parts should observe state
-        const Expanded(child: SideNavBar()), 
+        const Expanded(child: SideNavBar()),
         Expanded(
           flex: 8,
           child: Obx(
             () => PageView(
+              physics: NeverScrollableScrollPhysics(),
               controller: sideNavController.pageController,
-              children: sideNavController.screensList.toList(), // Convert RxList to a regular list
+              children: sideNavController.screensList
+                  .toList(), // Convert RxList to a regular list
             ),
           ),
         ),

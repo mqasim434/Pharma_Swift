@@ -2,11 +2,14 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:pharmacy_pos/screens/history_screen.dart';
+import 'package:pharmacy_pos/screens/analytics_screen.dart';
+import 'package:pharmacy_pos/screens/expiry_screen.dart';
+import 'package:pharmacy_pos/screens/orders_screen.dart';
 import 'package:pharmacy_pos/screens/home_screen.dart';
 import 'package:pharmacy_pos/screens/products_screen.dart';
+import 'package:pharmacy_pos/screens/sales_screen.dart';
 import 'package:pharmacy_pos/screens/settings_screen.dart';
-import 'package:pharmacy_pos/screens/suppliers_screen.dart';
+import 'package:pharmacy_pos/screens/stock_screen.dart';
 
 class SideNavController extends GetxController {
   final RxString _selectedItemLabel = "Home".obs;
@@ -34,14 +37,19 @@ class SideNavController extends GetxController {
       case 'Orders':
         _selectedPageIndex.value = 1;
         break;
-      case 'Suppliers':
+      case 'Products':
         _selectedPageIndex.value = 2;
         break;
-      case 'Products':
+      case 'Stock':
         _selectedPageIndex.value = 3;
-        break;
-      case 'Settings':
+      case 'Sales':
         _selectedPageIndex.value = 4;
+        break;
+      case 'Expiry':
+        _selectedPageIndex.value = 5;
+        break;
+      case 'Analytics':
+        _selectedPageIndex.value = 6;
         break;
     }
 
@@ -59,11 +67,15 @@ class SideNavController extends GetxController {
       case 1:
         return 'Orders';
       case 2:
-        return 'Suppliers';
-      case 3:
         return 'Products';
+      case 3:
+        return 'Stock';
       case 4:
-        return 'Settings';
+        return 'Sales';
+      case 5:
+        return 'Expiry';
+      case 6:
+        return 'Analytics';
       default:
         return 'Home';
     }
@@ -71,10 +83,12 @@ class SideNavController extends GetxController {
 
   List<Widget> screensList = [
     HomeScreen(),
-    HistoryScreen(),
-    SuppliersScreen(),
+    OrdersScreen(),
     ProductsScreen(),
-    SettingsScreen(),
+    StockScreen(),
+    SalesScreen(),
+    ExpiryScreen(),
+    AnalyticsScreen(),
   ].obs;
 
   SideNavController() {

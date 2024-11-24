@@ -22,22 +22,19 @@ class SideNavBar extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.all(20.0),
-            child: Row(
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Icon(
-                  Icons.medical_information,
-                  color: MyColors.greenColor,
-                ),
+                Image.asset(width: 80, 'assets/images/pharmacy.png'),
                 SizedBox(
-                  width: 12,
+                  height: 4,
                 ),
                 Text(
-                  'MediKit\nPOS',
+                  'Pharma Swift',
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 18,
+                    fontSize: 14,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -53,7 +50,6 @@ class SideNavBar extends StatelessWidget {
               ),
             ),
           ),
-          // Only wrap individual NavItemWidgets with Obx
           Obx(() => NavItemWidget(
                 label: 'Home',
                 icon: Icons.home,
@@ -72,15 +68,6 @@ class SideNavBar extends StatelessWidget {
                 },
               )),
           Obx(() => NavItemWidget(
-                label: 'Suppliers',
-                icon: Icons.production_quantity_limits,
-                isSelected:
-                    sideNavController.selectedItemLabel.value == 'Suppliers',
-                onTap: () {
-                  sideNavController.changeSelectedLabel('Suppliers');
-                },
-              )),
-          Obx(() => NavItemWidget(
                 label: 'Products',
                 icon: Icons.medication,
                 isSelected:
@@ -90,12 +77,39 @@ class SideNavBar extends StatelessWidget {
                 },
               )),
           Obx(() => NavItemWidget(
-                label: 'Settings',
+                label: 'Stock',
+                icon: Icons.production_quantity_limits,
+                isSelected:
+                    sideNavController.selectedItemLabel.value == 'Stock',
+                onTap: () {
+                  sideNavController.changeSelectedLabel('Stock');
+                },
+              )),
+          Obx(() => NavItemWidget(
+                label: 'Sales',
+                icon: Icons.assessment,
+                isSelected:
+                    sideNavController.selectedItemLabel.value == 'Sales',
+                onTap: () {
+                  sideNavController.changeSelectedLabel('Sales');
+                },
+              )),
+          Obx(() => NavItemWidget(
+                label: 'Expiry',
+                icon: Icons.event,
+                isSelected:
+                    sideNavController.selectedItemLabel.value == 'Expiry',
+                onTap: () {
+                  sideNavController.changeSelectedLabel('Expiry');
+                },
+              )),
+          Obx(() => NavItemWidget(
+                label: 'Analytics',
                 icon: Icons.settings,
                 isSelected:
-                    sideNavController.selectedItemLabel.value == 'Settings',
+                    sideNavController.selectedItemLabel.value == 'Analytics',
                 onTap: () {
-                  sideNavController.changeSelectedLabel('Settings');
+                  sideNavController.changeSelectedLabel('Analytics');
                 },
               )),
         ],

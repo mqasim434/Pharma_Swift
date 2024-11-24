@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pharmacy_pos/components/update_product_dialogue.dart';
+import 'package:pharmacy_pos/controllers/products_controller.dart';
 import 'package:pharmacy_pos/database/products_db_helper.dart';
 import 'package:pharmacy_pos/models/product_model.dart';
 import 'package:pharmacy_pos/utils/colors.dart';
@@ -16,8 +17,8 @@ class ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Get.put<ProductsDBController>(ProductsDBController());
-    var productsController = Get.find<ProductsDBController>();
+    Get.put<ProductsController>(ProductsController());
+    var productsController = Get.find<ProductsController>();
     return Stack(
       children: [
         Container(
@@ -37,30 +38,19 @@ class ProductCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Expanded(
-                child: Center(
-                    child: productModel.imageUrl == null
-                        ? Image.file(
-                            File('C://Users/mq300/Desktop/panadol.png'),
-                          )
-                        // : Image.asset('assets/images/medicine.png'),
-                        // ),
-                        : Image.file(
-                            File(productModel.imageUrl.toString().trim()))),
-              ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    '${productModel.name}${productModel.type}',
+                    '${productModel.name}${productModel.category}',
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                   ),
                   Text(
-                    productModel.formula,
+                    productModel.formula ?? 'N/A',
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                   ),
                   Text(
-                    productModel.unitPrice.toString(),
+                    productModel.unitPurchasePrice.toString(),
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                   ),
                 ],
@@ -116,12 +106,11 @@ class ProductCard extends StatelessWidget {
                                               TextButton(
                                                 onPressed: () {
                                                   productsController
-                                                      .deleteProductById(
-                                                          productModel.name)
-                                                      .then((value) {
-                                                    Navigator.pop(context);
-                                                    Navigator.pop(context);
-                                                  });
+                                                      .deleteProduct(
+                                                          productModel.id
+                                                              .toString());
+                                                  Navigator.pop(context);
+                                                  Navigator.pop(context);
                                                 },
                                                 child: Text('Yes'),
                                               ),

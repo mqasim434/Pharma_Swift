@@ -1,21 +1,19 @@
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:pharmacy_pos/models/order_model.dart';
 import 'package:pharmacy_pos/models/product_model.dart';
 
 class DBHelper {
-  static const String productBoxName = 'productsBox';
-
-  /// Initialize Hive and open necessary boxes
   static Future<void> init() async {
-    await Hive.initFlutter(); // Initializes Hive with Flutter support
+    final directory = await getApplicationSupportDirectory();
+    Hive.init('${directory.path}/Data');
+    print(directory.path);
 
-    // Register the Medicine adapter
     Hive.registerAdapter(ProductModelAdapter());
-
-    // Open the products box
-    await Hive.openBox<ProductModel>(productBoxName);
+    Hive.registerAdapter(OrderModelAdapter());
+    Hive.registerAdapter(OrderItemAdapter());
   }
 
-  /// Close Hive boxes when the app exits
   static Future<void> close() async {
     await Hive.close();
   }

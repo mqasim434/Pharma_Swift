@@ -1,14 +1,14 @@
 import 'package:get/get.dart';
+import 'package:pharmacy_pos/controllers/products_controller.dart';
 import 'package:pharmacy_pos/models/product_model.dart';
-import 'package:pharmacy_pos/database/products_db_helper.dart';
 
 class FiltersController extends GetxController {
   RxString selectedLabel = "All".obs;
   RxList<ProductModel> filteredProducts = <ProductModel>[].obs;
   RxBool isSearching = false.obs;
 
-  final ProductsDBController productsDBController =
-      Get.find<ProductsDBController>();
+  final ProductsController productsDBController =
+      Get.put<ProductsController>(ProductsController());
 
   @override
   void onInit() {
@@ -19,13 +19,13 @@ class FiltersController extends GetxController {
   // Method to fetch products from the database
   void fetchProducts() {
     filteredProducts.value =
-        productsDBController.products; // Assuming products are fetched here
+        productsDBController.productList; // Assuming products are fetched here
   }
 
   void changeLabel(String label) {
     selectedLabel.value = label;
     updateFilteredProducts(
-        productsDBController.products); // Update filtered products
+        productsDBController.productList); // Update filtered products
   }
 
   void updateFilteredProducts(List<ProductModel> allProducts) {
@@ -33,7 +33,7 @@ class FiltersController extends GetxController {
       filteredProducts.value = allProducts; // Show all products
     } else {
       filteredProducts.value = allProducts
-          .where((element) => element.type == selectedLabel.value)
+          .where((element) => element.category == selectedLabel.value)
           .toList(); // Filter products by selected label
     }
   }
@@ -50,10 +50,25 @@ class FiltersController extends GetxController {
       filteredProducts.value =
           allProducts; // Reset to all products if query is empty
     } else {
-      filteredProducts.value = allProducts
-          .where((product) =>
-              product.name.toLowerCase().contains(query.toLowerCase()))
-          .toList(); // Filter by query
+      filteredProducts.value = allProducts.where((product) {
+        final name = product.name?.toLowerCase() ?? '';
+        final barcode = product.barcode?.toLowerCase() ?? '';
+        final formula = product.formula?.toLowerCase() ?? '';
+        final company = product.company?.toLowerCase() ?? '';
+
+        return (name.isNotEmpty &&
+                name != 'n/a' &&
+                name.contains(query.toLowerCase())) ||
+            (barcode.isNotEmpty &&
+                barcode != 'n/a' &&
+                barcode.contains(query.toLowerCase())) ||
+            (company.isNotEmpty &&
+                company != 'n/a' &&
+                company.contains(query.toLowerCase())) ||
+            (formula.isNotEmpty &&
+                formula != 'n/a' &&
+                formula.contains(query.toLowerCase()));
+      }).toList();
     }
   }
 }

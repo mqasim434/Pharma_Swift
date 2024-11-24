@@ -17,73 +17,76 @@ class ProductModelAdapter extends TypeAdapter<ProductModel> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return ProductModel(
-      name: fields[0] as String,
-      type: fields[1] as String,
-      formula: fields[2] as String,
-      vendor: fields[3] as String,
-      strength: fields[4] as double?,
-      availableUnits: fields[5] as int?,
-      barcode: fields[18] as String?,
-      blistersPerPack: fields[6] as int?,
-      unitsPerBlister: fields[7] as int?,
-      totalBlisters: fields[8] as int?,
-      totalPacks: fields[9] as int?,
-      quantity: fields[10] as int?,
-      expiryDate: fields[11] as DateTime,
-      batchNumber: fields[12] as String,
-      rackNo: fields[13] as String,
-      isSingleUnit: fields[14] as bool,
-      unitPrice: fields[15] as double,
-      pricePerBlister: fields[16] as double?,
-      pricePerPack: fields[17] as double?,
-      imageUrl: fields[19] as String?,
+      id: fields[0] as String,
+      name: fields[1] as String,
+      category: fields[2] as String,
+      formula: fields[3] as String?,
+      strength: fields[4] as String?,
+      company: fields[5] as String,
+      batchNumber: fields[6] as String,
+      barcode: fields[7] as String?,
+      isSingleUnit: fields[16] as bool,
+      unitPurchasePrice: fields[9] as double,
+      unitSalePrice: fields[10] as double?,
+      unitsInPack: fields[11] as int?,
+      packPurchasePrice: fields[12] as double?,
+      packPurchaseGSTIncluded: fields[20] as double?,
+      packSalePrice: fields[13] as double?,
+      availableUnits: fields[8] as int?,
+      availablePacks: fields[14] as int?,
+      expiryDate: fields[15] as String,
+      reorderLevel: fields[17] as int?,
+      gst: fields[18] as double?,
+      margin: fields[19] as double?,
     );
   }
 
   @override
   void write(BinaryWriter writer, ProductModel obj) {
     writer
-      ..writeByte(20)
+      ..writeByte(21)
       ..writeByte(0)
-      ..write(obj.name)
+      ..write(obj.id)
       ..writeByte(1)
-      ..write(obj.type)
+      ..write(obj.name)
       ..writeByte(2)
-      ..write(obj.formula)
+      ..write(obj.category)
       ..writeByte(3)
-      ..write(obj.vendor)
+      ..write(obj.formula)
       ..writeByte(4)
       ..write(obj.strength)
-      ..writeByte(15)
-      ..write(obj.unitPrice)
-      ..writeByte(7)
-      ..write(obj.unitsPerBlister)
-      ..writeByte(6)
-      ..write(obj.blistersPerPack)
-      ..writeByte(8)
-      ..write(obj.totalBlisters)
-      ..writeByte(9)
-      ..write(obj.totalPacks)
       ..writeByte(5)
-      ..write(obj.availableUnits)
-      ..writeByte(10)
-      ..write(obj.quantity)
-      ..writeByte(11)
-      ..write(obj.expiryDate)
-      ..writeByte(12)
+      ..write(obj.company)
+      ..writeByte(6)
       ..write(obj.batchNumber)
-      ..writeByte(13)
-      ..write(obj.rackNo)
-      ..writeByte(14)
-      ..write(obj.isSingleUnit)
-      ..writeByte(16)
-      ..write(obj.pricePerBlister)
-      ..writeByte(17)
-      ..write(obj.pricePerPack)
-      ..writeByte(18)
+      ..writeByte(7)
       ..write(obj.barcode)
+      ..writeByte(8)
+      ..write(obj.availableUnits)
+      ..writeByte(9)
+      ..write(obj.unitPurchasePrice)
+      ..writeByte(10)
+      ..write(obj.unitSalePrice)
+      ..writeByte(11)
+      ..write(obj.unitsInPack)
+      ..writeByte(12)
+      ..write(obj.packPurchasePrice)
+      ..writeByte(13)
+      ..write(obj.packSalePrice)
+      ..writeByte(14)
+      ..write(obj.availablePacks)
+      ..writeByte(15)
+      ..write(obj.expiryDate)
+      ..writeByte(16)
+      ..write(obj.isSingleUnit)
+      ..writeByte(17)
+      ..write(obj.reorderLevel)
+      ..writeByte(18)
+      ..write(obj.gst)
       ..writeByte(19)
-      ..write(obj.imageUrl);
+      ..write(obj.margin)
+      ..writeByte(20)
+      ..write(obj.packPurchaseGSTIncluded);
   }
 
   @override

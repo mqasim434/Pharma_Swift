@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pharmacy_pos/controllers/filter_controller.dart';
-import 'package:pharmacy_pos/database/products_db_helper.dart';
-
 class FilterItemWidget extends StatelessWidget {
   const FilterItemWidget({
     super.key,
@@ -15,7 +13,6 @@ class FilterItemWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Access the FiltersController instance
     Get.put(FiltersController());
     final FiltersController filtersController = Get.find<FiltersController>();
 
