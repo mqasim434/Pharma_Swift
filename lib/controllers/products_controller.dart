@@ -1,6 +1,5 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
@@ -41,6 +40,7 @@ class ProductsController extends GetxController {
 
   ProductsDBHelper _productsDBHelper = ProductsDBHelper();
 
+
   @override
   void onInit() {
     super.onInit();
@@ -53,12 +53,12 @@ class ProductsController extends GetxController {
     int nextId = lastId + 1;
     await idBox.put('lastProductId', nextId);
     return nextId;
+
   }
 
   // Fetch all products
   Future<void> fetchAllProducts() async {
     productList.value = await _productsDBHelper.getAllProducts();
-    EasyLoading.dismiss();
   }
 
   final DateFormat dateFormatter = DateFormat('dd/MM/yyyy');
@@ -132,7 +132,6 @@ class ProductsController extends GetxController {
 
   // Add a new product
   Future<void> addProduct({ProductModel? productModel}) async {
-    EasyLoading.show(status: 'Adding Product');
     if (productModel != null || formKey.currentState!.validate()) {
       final int newId = await _getNextProductId();
 
@@ -182,7 +181,6 @@ class ProductsController extends GetxController {
       } catch (e) {
         print("Error adding product to database: $e");
       } finally {
-        EasyLoading.dismiss();
       }
     }
   }

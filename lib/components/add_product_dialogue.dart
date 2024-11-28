@@ -5,11 +5,18 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:pharmacy_pos/components/textfield_with_title.dart';
 import 'package:pharmacy_pos/controllers/products_controller.dart';
+import 'package:pharmacy_pos/controllers/purchase_controller.dart';
+import 'package:pharmacy_pos/models/purchase_model.dart';
 import 'package:pharmacy_pos/utils/colors.dart';
 
-class AddProductDialogue extends StatelessWidget {
+class AddProductDialogue extends StatefulWidget {
   const AddProductDialogue({super.key});
 
+  @override
+  State<AddProductDialogue> createState() => _AddProductDialogueState();
+}
+
+class _AddProductDialogueState extends State<AddProductDialogue> {
   @override
   Widget build(BuildContext context) {
     var productsController = Get.put<ProductsController>(ProductsController());
@@ -39,6 +46,7 @@ class AddProductDialogue extends StatelessWidget {
           InkWell(
             onTap: () {
               productsController.clearFields();
+              setState(() {});
               Navigator.pop(context);
             },
             child: Icon(Icons.close),
@@ -379,7 +387,6 @@ class AddProductDialogue extends StatelessWidget {
                             title: 'Barcode',
                             controller: productsController.barcodeController,
                           ),
-                          // Expiry Date Picker (no need for Obx as it's a static value)
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -430,9 +437,9 @@ class AddProductDialogue extends StatelessWidget {
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    print(productsController.availableUnitsController);
-                    productsController.addProduct();
-                    Navigator.pop(context);
+                    productsController.addProduct().then((value) {
+                      Navigator.pop(context);
+                    });
                   },
                   style: ElevatedButton.styleFrom(
                     minimumSize: Size(screenWidth * 0.30, 50),

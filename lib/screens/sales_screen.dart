@@ -8,6 +8,7 @@ import 'package:pharmacy_pos/controllers/orders_filter_controller.dart';
 import 'package:pharmacy_pos/models/order_model.dart';
 import 'package:pharmacy_pos/screens/orders_screen.dart';
 import 'package:pharmacy_pos/utils/colors.dart';
+import 'package:pharmacy_pos/utils/utility_functions.dart';
 
 class SalesScreen extends StatefulWidget {
   const SalesScreen({super.key});
@@ -34,68 +35,64 @@ class _SalesScreenState extends State<SalesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: MyColors.greenColor,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text(
+              'Sales',
+              style: TextStyle(
+                fontSize: 32,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                DropdownButton<String>(
+                  value: selectedFilter,
+                  items: const [
+                    DropdownMenuItem(
+                        value: "Current Month", child: Text("Current Month")),
+                    DropdownMenuItem(
+                        value: "Select Month & Year",
+                        child: Text("Select Month & Year")),
+                  ],
+                  onChanged: (value) async {
+                    setState(() {
+                      selectedFilter = value!;
+                    });
+                    if (value == "Current Month") {
+                      final now = DateTime.now();
+                      setState(() {
+                        selectedMonth = now.month;
+                        selectedYear = now.year;
+                      });
+                      Get.find<OrderFilterController>()
+                          .setMonthAndYear(selectedMonth!, selectedYear!);
+                    } else if (value == "Select Month & Year") {
+                      await _showMonthYearPicker(context);
+                    }
+                  },
+                ),
+                if (selectedMonth != null && selectedYear != null)
+                  Padding(
+                    padding: const EdgeInsets.only(left: 8.0),
+                    child: Text(
+                      "Selected: ${DateFormat('MMMM yyyy').format(DateTime(selectedYear!, selectedMonth!))}",
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+              ],
+            ),
+          ],
+        ),
+      ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header with Filter Options
-          Container(
-            color: MyColors.greenColor,
-            height: MediaQuery.of(context).size.height * 0.12,
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'Sales',
-                  style: TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    DropdownButton<String>(
-                      value: selectedFilter,
-                      items: const [
-                        DropdownMenuItem(
-                            value: "Current Month",
-                            child: Text("Current Month")),
-                        DropdownMenuItem(
-                            value: "Select Month & Year",
-                            child: Text("Select Month & Year")),
-                      ],
-                      onChanged: (value) async {
-                        setState(() {
-                          selectedFilter = value!;
-                        });
-                        if (value == "Current Month") {
-                          final now = DateTime.now();
-                          setState(() {
-                            selectedMonth = now.month;
-                            selectedYear = now.year;
-                          });
-                          Get.find<OrderFilterController>()
-                              .setMonthAndYear(selectedMonth!, selectedYear!);
-                        } else if (value == "Select Month & Year") {
-                          await _showMonthYearPicker(context);
-                        }
-                      },
-                    ),
-                    if (selectedMonth != null && selectedYear != null)
-                      Padding(
-                        padding: const EdgeInsets.only(left: 8.0),
-                        child: Text(
-                          "Selected: ${DateFormat('MMMM yyyy').format(DateTime(selectedYear!, selectedMonth!))}",
-                          style: const TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                  ],
-                ),
-              ],
-            ),
-          ),
           // Table Content
           Expanded(
             child: Obx(() {
@@ -109,17 +106,12 @@ class _SalesScreenState extends State<SalesScreen> {
                   0.0,
                   (sum, order) =>
                       sum +
-                      order.items.fold(
-                          0.0,
-                          (itemSum, item) =>
-                              itemSum +
-                              (item.profit * item.quantity) -
-                              (order.discount / 100) * order.totalAmount));
+                      UtilityFunctions.calculateProfitAfterDiscount(order));
               return Column(
                 children: [
                   // Total Sale
                   Container(
-                    color: MyColors.greenColor,
+                    color: MyColors.darkGreyColor,
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: Row(
                       mainAxisSize: MainAxisSize.max,
@@ -219,20 +211,10 @@ class _SalesScreenState extends State<SalesScreen> {
                                             '${order.discount.toStringAsFixed(2)} %'),
                                         tableCell(
                                             order.netAmount.toStringAsFixed(2)),
-                                        tableCell(
-                                          order.items
-                                              .fold(
-                                                  0.0,
-                                                  (subtotal, item) =>
-                                                      subtotal +
-                                                      (item.salePrice -
-                                                              item
-                                                                  .retailPrice) *
-                                                          item.quantity -
-                                                      (order.discount / 100) *
-                                                          order.totalAmount)
-                                              .toStringAsFixed(2),
-                                        ),
+                                        tableCell(UtilityFunctions
+                                                .calculateProfitAfterDiscount(
+                                                    order)
+                                            .toStringAsFixed(2)),
                                         tableCell(
                                           'Actions',
                                           hasOrderActions: true,
@@ -275,9 +257,8 @@ class _SalesScreenState extends State<SalesScreen> {
                                                         onPressed: () {
                                                           Get.find<
                                                                   OrdersController>()
-                                                              .deleteOrder(order
-                                                                  .id
-                                                                  .toString());
+                                                              .deleteOrder(
+                                                                  order);
                                                           Navigator.pop(
                                                               context);
                                                         },

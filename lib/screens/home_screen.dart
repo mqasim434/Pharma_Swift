@@ -25,514 +25,548 @@ class HomeScreen extends StatelessWidget {
 
     final hoveredRow = ValueNotifier<int?>(null);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          color: MyColors.greenColor,
-          height: MediaQuery.of(context).size.height * 0.09,
-          child: Center(
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: MyColors.greenColor,
+        title: Row(
+          children: [
+            const Text(
+              'Home',
+              style: TextStyle(
+                fontSize: 32,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(
+              width: 20,
+            ),
+            SizedBox(
+              width: MediaQuery.of(context).size.width * 0.215,
+              height: 40,
+              child: TextFormField(
+                decoration: InputDecoration(
+                    hintText: 'Search an item...',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(0),
+                    ),
+                    filled: true,
+                    fillColor: Colors.white,
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 10)),
+                onChanged: (value) {
+                  if (value.isEmpty) {
+                    filtersController.switchSearchingStatus(false);
+                    filtersController.updateFilteredProducts(productsController
+                        .productList); // Reset to all products
+                  } else {
+                    filtersController.switchSearchingStatus(true);
+                    filtersController.searchProducts(
+                        value, productsController.productList);
+                  }
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
             child: Row(
               children: [
-                const Padding(
-                  padding: EdgeInsets.only(left: 10),
-                  child: Text(
-                    'Home',
-                    style: TextStyle(
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                  width: 20,
-                ),
-                SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.215,
-                  height: 40,
-                  child: TextFormField(
-                    decoration: InputDecoration(
-                        hintText: 'Search an item...',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(0),
-                        ),
-                        filled: true,
-                        fillColor: Colors.white,
-                        contentPadding:
-                            const EdgeInsets.symmetric(horizontal: 10)),
-                    onChanged: (value) {
-                      if (value.isEmpty) {
-                        filtersController.switchSearchingStatus(false);
-                        filtersController.updateFilteredProducts(
-                            productsController
-                                .productList); // Reset to all products
-                      } else {
-                        filtersController.switchSearchingStatus(true);
-                        filtersController.searchProducts(
-                            value, productsController.productList);
-                      }
-                    },
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-        Expanded(
-          child: Row(
-            children: [
-              Expanded(
-                flex: 3,
-                child: Obx(() {
-                  if (filtersController.filteredProducts.isEmpty) {
-                    return const Center(child: Text('No Products Available'));
-                  }
-                  return Column(
-                    children: [
-                      // Fixed Header Row
-                      Container(
-                        color:
-                            MyColors.greenColor, // Background color for header
-                        child: Row(
-                          children: [
-                            Expanded(
-                              flex: 2,
-                              child: Container(
-                                decoration: const BoxDecoration(
-                                  border: Border(
-                                    top: BorderSide(
+                Expanded(
+                  flex: 3,
+                  child: Obx(() {
+                    if (filtersController.filteredProducts.isEmpty) {
+                      return const Center(
+                          child: Text('No Products Available'));
+                    }
+                    return Column(
+                      children: [
+                        // Fixed Header Row
+                        Container(
+                          color: MyColors
+                              .greenColor, // Background color for header
+                          child: Row(
+                            children: [
+                              Expanded(
+                                flex: 2,
+                                child: Container(
+                                  decoration: const BoxDecoration(
+                                    border: Border(
+                                      top: BorderSide(
+                                          color: Colors.white,
+                                          width: 2.0), // Border on top
+                                      right: BorderSide(
                                         color: Colors.white,
-                                        width: 2.0), // Border on top
-                                    right: BorderSide(
-                                      color: Colors.white,
-                                      width: 1.0,
-                                    ),
-                                  ),
-                                ),
-                                child: tableCell('Name', isHeader: true),
-                              ),
-                            ),
-                            Expanded(
-                              flex: 2,
-                              child: Container(
-                                decoration: const BoxDecoration(
-                                  border: Border(
-                                    top: BorderSide(
-                                        color: Colors.white,
-                                        width: 2.0), // Border on top
-                                    right: BorderSide(
-                                      color: Colors.white,
-                                      width: 1.0,
-                                    ),
-                                  ),
-                                ),
-                                child: tableCell('Formula', isHeader: true),
-                              ),
-                            ),
-                            Expanded(
-                              flex: 1,
-                              child: Container(
-                                decoration: const BoxDecoration(
-                                  border: Border(
-                                    top: BorderSide(
-                                        color: Colors.white,
-                                        width: 2.0), // Border on top
-                                    right: BorderSide(
-                                      color: Colors.white,
-                                      width: 1.0,
-                                    ),
-                                  ),
-                                ),
-                                child: tableCell('Strength', isHeader: true),
-                              ),
-                            ),
-                            Expanded(
-                              flex: 1,
-                              child: Container(
-                                decoration: const BoxDecoration(
-                                  border: Border(
-                                    top: BorderSide(
-                                        color: Colors.white,
-                                        width: 2.0), // Border on top
-                                    right: BorderSide(
-                                      color: Colors.white,
-                                      width: 1.0,
-                                    ),
-                                  ),
-                                ),
-                                child: tableCell('Category', isHeader: true),
-                              ),
-                            ),
-                            Expanded(
-                              flex: 1,
-                              child: Container(
-                                decoration: const BoxDecoration(
-                                  border: Border(
-                                    top: BorderSide(
-                                        color: Colors.white,
-                                        width: 2.0), // Border on top
-                                    right: BorderSide(
-                                      color: Colors.white,
-                                      width: 1.0,
-                                    ),
-                                  ),
-                                ),
-                                child: tableCell('Company', isHeader: true),
-                              ),
-                            ),
-                            Expanded(
-                              flex: 1,
-                              child: Container(
-                                decoration: const BoxDecoration(
-                                  border: Border(
-                                    top: BorderSide(
-                                        color: Colors.white,
-                                        width: 2.0), // Border on top
-                                    right: BorderSide(
-                                      color: Colors.white,
-                                      width: 1.0,
-                                    ),
-                                  ),
-                                ),
-                                child: tableCell('Batch', isHeader: true),
-                              ),
-                            ),
-                            Expanded(
-                              flex: 1,
-                              child: Container(
-                                decoration: const BoxDecoration(
-                                  border: Border(
-                                    top: BorderSide(
-                                        color: Colors.white,
-                                        width: 2.0), // Border on top
-                                    right: BorderSide(
-                                      color: Colors.white,
-                                      width: 1.0,
-                                    ),
-                                  ),
-                                ),
-                                child: tableCell('Balance', isHeader: true),
-                              ),
-                            ),
-                            Expanded(
-                              flex: 1,
-                              child: Container(
-                                decoration: const BoxDecoration(
-                                  border: Border(
-                                    top: BorderSide(
-                                        color: Colors.white,
-                                        width: 2.0), // Border on top
-                                    right: BorderSide(
-                                      color: Colors.white,
-                                      width: 1.0,
-                                    ),
-                                  ),
-                                ),
-                                child: tableCell('P. Price', isHeader: true),
-                              ),
-                            ),
-                            Expanded(
-                              flex: 1,
-                              child: Container(
-                                decoration: const BoxDecoration(
-                                  border: Border(
-                                    top: BorderSide(
-                                        color: Colors.white,
-                                        width: 2.0), // Border on top
-                                    right: BorderSide(
-                                      color: Colors.white,
-                                      width: 1.0,
-                                    ),
-                                  ),
-                                ),
-                                child: tableCell('Sale Price', isHeader: true),
-                              ),
-                            ),
-                            Expanded(
-                              flex: 1,
-                              child: Container(
-                                decoration: const BoxDecoration(
-                                  border: Border(
-                                    top: BorderSide(
-                                        color: Colors.white,
-                                        width: 2.0), // Border// Border on top
-                                  ),
-                                ),
-                                child: tableCell('Expiry', isHeader: true),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Expanded(
-                        child: SingleChildScrollView(
-                          scrollDirection: Axis.vertical,
-                          child: ValueListenableBuilder<int?>(
-                            valueListenable: hoveredRow,
-                            builder: (context, hoveredIndex, child) {
-                              return Table(
-                                border: TableBorder.all(color: Colors.grey),
-                                columnWidths: const {
-                                  0: FlexColumnWidth(2), // Name column
-                                  1: FlexColumnWidth(2), // Formula column
-                                  2: FlexColumnWidth(1), // Category column
-                                  3: FlexColumnWidth(1), // Category column
-                                  4: FlexColumnWidth(1), // Category column
-                                  5: FlexColumnWidth(1), // Batch column
-                                  6: FlexColumnWidth(1), // Balance column
-                                  7: FlexColumnWidth(
-                                      1), // Unit Retail Price column
-                                  8: FlexColumnWidth(
-                                      1), // Unit Sale Price column
-                                  9: FlexColumnWidth(1), // Expiry column
-                                },
-                                children: List.generate(
-                                  filtersController.filteredProducts.length,
-                                  (index) {
-                                    final product = filtersController
-                                        .filteredProducts[index];
-                                    return TableRow(
-                                      decoration: BoxDecoration(
-                                        border: Border.all(
-                                          color: hoveredIndex == index
-                                              ? Colors.blue
-                                              : Colors.grey,
-                                          width:
-                                              hoveredIndex == index ? 2.0 : 1.0,
-                                        ),
-                                        color: hoveredIndex == index
-                                            ? Colors.blue.withOpacity(0.1)
-                                            : Colors
-                                                .transparent, // Optional background color
+                                        width: 1.0,
                                       ),
-                                      children: [
-                                        MouseRegion(
-                                          onEnter: (_) =>
-                                              hoveredRow.value = index,
-                                          onExit: (_) =>
-                                              hoveredRow.value = null,
-                                          child: InkWell(
-                                              onTap: () {
-                                                int available =
-                                                    product.availableUnits ?? 0;
-                                                if (available < 0) {
-                                                  showOutOfStockDialogue(
-                                                      context, product);
-                                                } else {
-                                                  currentOrderController
-                                                      .addItemToCart(product);
-                                                }
-                                              },
-                                              child: tableCell(product.name)),
-                                        ),
-                                        MouseRegion(
-                                          onEnter: (_) =>
-                                              hoveredRow.value = index,
-                                          onExit: (_) =>
-                                              hoveredRow.value = null,
-                                          child: InkWell(
-                                              onTap: () {
-                                                int available =
-                                                    product.availableUnits ?? 0;
-                                                if (available > 0) {
-                                                  currentOrderController
-                                                      .addItemToCart(product);
-                                                } else {
-                                                  showOutOfStockDialogue(
-                                                      context, product);
-                                                }
-                                              },
-                                              child: tableCell(
-                                                  product.formula ?? 'N/A')),
-                                        ),
-                                        MouseRegion(
-                                          onEnter: (_) =>
-                                              hoveredRow.value = index,
-                                          onExit: (_) =>
-                                              hoveredRow.value = null,
-                                          child: InkWell(
-                                              onTap: () {
-                                                int available =
-                                                    product.availableUnits ?? 0;
-                                                if (available > 0) {
-                                                  currentOrderController
-                                                      .addItemToCart(product);
-                                                } else {
-                                                  showOutOfStockDialogue(
-                                                      context, product);
-                                                }
-                                              },
-                                              child: tableCell(
-                                                  product.strength.toString())),
-                                        ),
-                                        MouseRegion(
-                                          onEnter: (_) =>
-                                              hoveredRow.value = index,
-                                          onExit: (_) =>
-                                              hoveredRow.value = null,
-                                          child: InkWell(
-                                              onTap: () {
-                                                int available =
-                                                    product.availableUnits ?? 0;
-                                                if (available > 0) {
-                                                  currentOrderController
-                                                      .addItemToCart(product);
-                                                } else {
-                                                  showOutOfStockDialogue(
-                                                      context, product);
-                                                }
-                                              },
-                                              child:
-                                                  tableCell(product.category)),
-                                        ),
-                                        MouseRegion(
-                                          onEnter: (_) =>
-                                              hoveredRow.value = index,
-                                          onExit: (_) =>
-                                              hoveredRow.value = null,
-                                          child: InkWell(
-                                              onTap: () {
-                                                int available =
-                                                    product.availableUnits ?? 0;
-                                                if (available > 0) {
-                                                  currentOrderController
-                                                      .addItemToCart(product);
-                                                } else {
-                                                  showOutOfStockDialogue(
-                                                      context, product);
-                                                }
-                                              },
-                                              child:
-                                                  tableCell(product.company)),
-                                        ),
-                                        MouseRegion(
-                                          onEnter: (_) =>
-                                              hoveredRow.value = index,
-                                          onExit: (_) =>
-                                              hoveredRow.value = null,
-                                          child: InkWell(
-                                              onTap: () {
-                                                int available =
-                                                    product.availableUnits ?? 0;
-                                                if (available > 0) {
-                                                  currentOrderController
-                                                      .addItemToCart(product);
-                                                } else {
-                                                  showOutOfStockDialogue(
-                                                      context, product);
-                                                }
-                                              },
-                                              child: tableCell(
-                                                  product.batchNumber)),
-                                        ),
-                                        MouseRegion(
-                                          onEnter: (_) =>
-                                              hoveredRow.value = index,
-                                          onExit: (_) =>
-                                              hoveredRow.value = null,
-                                          child: InkWell(
-                                            onTap: () {
-                                              int available =
-                                                  product.availableUnits ?? 0;
-                                              if (available > 0) {
-                                                currentOrderController
-                                                    .addItemToCart(product);
-                                              } else {
-                                                showOutOfStockDialogue(
-                                                    context, product);
-                                              }
-                                            },
-                                            child: tableCell(product
-                                                .availableUnits
-                                                .toString()),
-                                          ),
-                                        ),
-                                        MouseRegion(
-                                          onEnter: (_) =>
-                                              hoveredRow.value = index,
-                                          onExit: (_) =>
-                                              hoveredRow.value = null,
-                                          child: InkWell(
-                                            onTap: () {
-                                              int available =
-                                                  product.availableUnits ?? 0;
-                                              if (available > 0) {
-                                                currentOrderController
-                                                    .addItemToCart(product);
-                                              } else {
-                                                showOutOfStockDialogue(
-                                                    context, product);
-                                              }
-                                            },
-                                            child: tableCell(product
-                                                .unitPurchasePrice
-                                                .toStringAsFixed(2)),
-                                          ),
-                                        ),
-                                        MouseRegion(
-                                          onEnter: (_) =>
-                                              hoveredRow.value = index,
-                                          onExit: (_) =>
-                                              hoveredRow.value = null,
-                                          child: InkWell(
-                                            onTap: () {
-                                              int available =
-                                                  product.availableUnits ?? 0;
-                                              if (available > 0) {
-                                                currentOrderController
-                                                    .addItemToCart(product);
-                                              } else {
-                                                showOutOfStockDialogue(
-                                                    context, product);
-                                              }
-                                            },
-                                            child: tableCell(
-                                                product.unitSalePrice == null
-                                                    ? '0.0'
-                                                    : product.unitSalePrice!
-                                                        .toDouble()
-                                                        .toStringAsFixed(2)),
-                                          ),
-                                        ),
-                                        MouseRegion(
-                                          onEnter: (_) =>
-                                              hoveredRow.value = index,
-                                          onExit: (_) =>
-                                              hoveredRow.value = null,
-                                          child: InkWell(
-                                            onTap: () {
-                                              int available =
-                                                  product.availableUnits ?? 0;
-                                              if (available > 0) {
-                                                currentOrderController
-                                                    .addItemToCart(product);
-                                              } else {
-                                                showOutOfStockDialogue(
-                                                    context, product);
-                                              }
-                                            },
-                                            child:
-                                                tableCell(product.expiryDate),
-                                          ),
-                                        ),
-                                      ],
-                                    );
-                                  },
+                                    ),
+                                  ),
+                                  child: tableCell('Name', isHeader: true),
                                 ),
-                              );
-                            },
+                              ),
+                              Expanded(
+                                flex: 2,
+                                child: Container(
+                                  decoration: const BoxDecoration(
+                                    border: Border(
+                                      top: BorderSide(
+                                          color: Colors.white,
+                                          width: 2.0), // Border on top
+                                      right: BorderSide(
+                                        color: Colors.white,
+                                        width: 1.0,
+                                      ),
+                                    ),
+                                  ),
+                                  child:
+                                      tableCell('Formula', isHeader: true),
+                                ),
+                              ),
+                              Expanded(
+                                flex: 1,
+                                child: Container(
+                                  decoration: const BoxDecoration(
+                                    border: Border(
+                                      top: BorderSide(
+                                          color: Colors.white,
+                                          width: 2.0), // Border on top
+                                      right: BorderSide(
+                                        color: Colors.white,
+                                        width: 1.0,
+                                      ),
+                                    ),
+                                  ),
+                                  child:
+                                      tableCell('Strength', isHeader: true),
+                                ),
+                              ),
+                              Expanded(
+                                flex: 1,
+                                child: Container(
+                                  decoration: const BoxDecoration(
+                                    border: Border(
+                                      top: BorderSide(
+                                          color: Colors.white,
+                                          width: 2.0), // Border on top
+                                      right: BorderSide(
+                                        color: Colors.white,
+                                        width: 1.0,
+                                      ),
+                                    ),
+                                  ),
+                                  child:
+                                      tableCell('Category', isHeader: true),
+                                ),
+                              ),
+                              Expanded(
+                                flex: 1,
+                                child: Container(
+                                  decoration: const BoxDecoration(
+                                    border: Border(
+                                      top: BorderSide(
+                                          color: Colors.white,
+                                          width: 2.0), // Border on top
+                                      right: BorderSide(
+                                        color: Colors.white,
+                                        width: 1.0,
+                                      ),
+                                    ),
+                                  ),
+                                  child:
+                                      tableCell('Company', isHeader: true),
+                                ),
+                              ),
+                              Expanded(
+                                flex: 1,
+                                child: Container(
+                                  decoration: const BoxDecoration(
+                                    border: Border(
+                                      top: BorderSide(
+                                          color: Colors.white,
+                                          width: 2.0), // Border on top
+                                      right: BorderSide(
+                                        color: Colors.white,
+                                        width: 1.0,
+                                      ),
+                                    ),
+                                  ),
+                                  child: tableCell('Batch', isHeader: true),
+                                ),
+                              ),
+                              Expanded(
+                                flex: 1,
+                                child: Container(
+                                  decoration: const BoxDecoration(
+                                    border: Border(
+                                      top: BorderSide(
+                                          color: Colors.white,
+                                          width: 2.0), // Border on top
+                                      right: BorderSide(
+                                        color: Colors.white,
+                                        width: 1.0,
+                                      ),
+                                    ),
+                                  ),
+                                  child:
+                                      tableCell('Balance', isHeader: true),
+                                ),
+                              ),
+                              Expanded(
+                                flex: 1,
+                                child: Container(
+                                  decoration: const BoxDecoration(
+                                    border: Border(
+                                      top: BorderSide(
+                                          color: Colors.white,
+                                          width: 2.0), // Border on top
+                                      right: BorderSide(
+                                        color: Colors.white,
+                                        width: 1.0,
+                                      ),
+                                    ),
+                                  ),
+                                  child:
+                                      tableCell('P. Price', isHeader: true),
+                                ),
+                              ),
+                              Expanded(
+                                flex: 1,
+                                child: Container(
+                                  decoration: const BoxDecoration(
+                                    border: Border(
+                                      top: BorderSide(
+                                          color: Colors.white,
+                                          width: 2.0), // Border on top
+                                      right: BorderSide(
+                                        color: Colors.white,
+                                        width: 1.0,
+                                      ),
+                                    ),
+                                  ),
+                                  child: tableCell('Sale Price',
+                                      isHeader: true),
+                                ),
+                              ),
+                              Expanded(
+                                flex: 1,
+                                child: Container(
+                                  decoration: const BoxDecoration(
+                                    border: Border(
+                                      top: BorderSide(
+                                          color: Colors.white,
+                                          width:
+                                              2.0), // Border// Border on top
+                                    ),
+                                  ),
+                                  child:
+                                      tableCell('Expiry', isHeader: true),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                      ),
-                    ],
-                  );
-                }),
-              ),
-              const CurrentOrderWidget(),
-            ],
-          ),
-        )
-      ],
+                        Expanded(
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.vertical,
+                            child: ValueListenableBuilder<int?>(
+                              valueListenable: hoveredRow,
+                              builder: (context, hoveredIndex, child) {
+                                return Table(
+                                  border:
+                                      TableBorder.all(color: Colors.grey),
+                                  columnWidths: const {
+                                    0: FlexColumnWidth(2), // Name column
+                                    1: FlexColumnWidth(2), // Formula column
+                                    2: FlexColumnWidth(
+                                        1), // Category column
+                                    3: FlexColumnWidth(
+                                        1), // Category column
+                                    4: FlexColumnWidth(
+                                        1), // Category column
+                                    5: FlexColumnWidth(1), // Batch column
+                                    6: FlexColumnWidth(1), // Balance column
+                                    7: FlexColumnWidth(
+                                        1), // Unit Retail Price column
+                                    8: FlexColumnWidth(
+                                        1), // Unit Sale Price column
+                                    9: FlexColumnWidth(1), // Expiry column
+                                  },
+                                  children: List.generate(
+                                    filtersController
+                                        .filteredProducts.length,
+                                    (index) {
+                                      final product = filtersController
+                                          .filteredProducts[index];
+                                      return TableRow(
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                            color: hoveredIndex == index
+                                                ? Colors.blue
+                                                : Colors.grey,
+                                            width: hoveredIndex == index
+                                                ? 2.0
+                                                : 1.0,
+                                          ),
+                                          color: hoveredIndex == index
+                                              ? Colors.blue.withOpacity(0.1)
+                                              : Colors
+                                                  .transparent, // Optional background color
+                                        ),
+                                        children: [
+                                          MouseRegion(
+                                            onEnter: (_) =>
+                                                hoveredRow.value = index,
+                                            onExit: (_) =>
+                                                hoveredRow.value = null,
+                                            child: InkWell(
+                                                onTap: () {
+                                                  int available = product
+                                                          .availableUnits ??
+                                                      0;
+                                                  if (available < 0) {
+                                                    showOutOfStockDialogue(
+                                                        context, product);
+                                                  } else {
+                                                    currentOrderController
+                                                        .addItemToCart(
+                                                            product);
+                                                  }
+                                                },
+                                                child: tableCell(
+                                                    product.name)),
+                                          ),
+                                          MouseRegion(
+                                            onEnter: (_) =>
+                                                hoveredRow.value = index,
+                                            onExit: (_) =>
+                                                hoveredRow.value = null,
+                                            child: InkWell(
+                                                onTap: () {
+                                                  int available = product
+                                                          .availableUnits ??
+                                                      0;
+                                                  if (available > 0) {
+                                                    currentOrderController
+                                                        .addItemToCart(
+                                                            product);
+                                                  } else {
+                                                    showOutOfStockDialogue(
+                                                        context, product);
+                                                  }
+                                                },
+                                                child: tableCell(
+                                                    product.formula ??
+                                                        'N/A')),
+                                          ),
+                                          MouseRegion(
+                                            onEnter: (_) =>
+                                                hoveredRow.value = index,
+                                            onExit: (_) =>
+                                                hoveredRow.value = null,
+                                            child: InkWell(
+                                                onTap: () {
+                                                  int available = product
+                                                          .availableUnits ??
+                                                      0;
+                                                  if (available > 0) {
+                                                    currentOrderController
+                                                        .addItemToCart(
+                                                            product);
+                                                  } else {
+                                                    showOutOfStockDialogue(
+                                                        context, product);
+                                                  }
+                                                },
+                                                child: tableCell(product
+                                                    .strength
+                                                    .toString())),
+                                          ),
+                                          MouseRegion(
+                                            onEnter: (_) =>
+                                                hoveredRow.value = index,
+                                            onExit: (_) =>
+                                                hoveredRow.value = null,
+                                            child: InkWell(
+                                                onTap: () {
+                                                  int available = product
+                                                          .availableUnits ??
+                                                      0;
+                                                  if (available > 0) {
+                                                    currentOrderController
+                                                        .addItemToCart(
+                                                            product);
+                                                  } else {
+                                                    showOutOfStockDialogue(
+                                                        context, product);
+                                                  }
+                                                },
+                                                child: tableCell(
+                                                    product.category)),
+                                          ),
+                                          MouseRegion(
+                                            onEnter: (_) =>
+                                                hoveredRow.value = index,
+                                            onExit: (_) =>
+                                                hoveredRow.value = null,
+                                            child: InkWell(
+                                                onTap: () {
+                                                  int available = product
+                                                          .availableUnits ??
+                                                      0;
+                                                  if (available > 0) {
+                                                    currentOrderController
+                                                        .addItemToCart(
+                                                            product);
+                                                  } else {
+                                                    showOutOfStockDialogue(
+                                                        context, product);
+                                                  }
+                                                },
+                                                child: tableCell(
+                                                    product.company)),
+                                          ),
+                                          MouseRegion(
+                                            onEnter: (_) =>
+                                                hoveredRow.value = index,
+                                            onExit: (_) =>
+                                                hoveredRow.value = null,
+                                            child: InkWell(
+                                                onTap: () {
+                                                  int available = product
+                                                          .availableUnits ??
+                                                      0;
+                                                  if (available > 0) {
+                                                    currentOrderController
+                                                        .addItemToCart(
+                                                            product);
+                                                  } else {
+                                                    showOutOfStockDialogue(
+                                                        context, product);
+                                                  }
+                                                },
+                                                child: tableCell(
+                                                    product.batchNumber)),
+                                          ),
+                                          MouseRegion(
+                                            onEnter: (_) =>
+                                                hoveredRow.value = index,
+                                            onExit: (_) =>
+                                                hoveredRow.value = null,
+                                            child: InkWell(
+                                              onTap: () {
+                                                int available = product
+                                                        .availableUnits ??
+                                                    0;
+                                                if (available > 0) {
+                                                  currentOrderController
+                                                      .addItemToCart(
+                                                          product);
+                                                } else {
+                                                  showOutOfStockDialogue(
+                                                      context, product);
+                                                }
+                                              },
+                                              child: tableCell(product
+                                                  .availableUnits
+                                                  .toString()),
+                                            ),
+                                          ),
+                                          MouseRegion(
+                                            onEnter: (_) =>
+                                                hoveredRow.value = index,
+                                            onExit: (_) =>
+                                                hoveredRow.value = null,
+                                            child: InkWell(
+                                              onTap: () {
+                                                int available = product
+                                                        .availableUnits ??
+                                                    0;
+                                                if (available > 0) {
+                                                  currentOrderController
+                                                      .addItemToCart(
+                                                          product);
+                                                } else {
+                                                  showOutOfStockDialogue(
+                                                      context, product);
+                                                }
+                                              },
+                                              child: tableCell(product
+                                                  .unitPurchasePrice
+                                                  .toStringAsFixed(2)),
+                                            ),
+                                          ),
+                                          MouseRegion(
+                                            onEnter: (_) =>
+                                                hoveredRow.value = index,
+                                            onExit: (_) =>
+                                                hoveredRow.value = null,
+                                            child: InkWell(
+                                              onTap: () {
+                                                int available = product
+                                                        .availableUnits ??
+                                                    0;
+                                                if (available > 0) {
+                                                  currentOrderController
+                                                      .addItemToCart(
+                                                          product);
+                                                } else {
+                                                  showOutOfStockDialogue(
+                                                      context, product);
+                                                }
+                                              },
+                                              child: tableCell(product
+                                                          .unitSalePrice ==
+                                                      null
+                                                  ? '0.0'
+                                                  : product.unitSalePrice!
+                                                      .toDouble()
+                                                      .toStringAsFixed(2)),
+                                            ),
+                                          ),
+                                          MouseRegion(
+                                            onEnter: (_) =>
+                                                hoveredRow.value = index,
+                                            onExit: (_) =>
+                                                hoveredRow.value = null,
+                                            child: InkWell(
+                                              onTap: () {
+                                                int available = product
+                                                        .availableUnits ??
+                                                    0;
+                                                if (available > 0) {
+                                                  currentOrderController
+                                                      .addItemToCart(
+                                                          product);
+                                                } else {
+                                                  showOutOfStockDialogue(
+                                                      context, product);
+                                                }
+                                              },
+                                              child: tableCell(
+                                                  product.expiryDate),
+                                            ),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  }),
+                ),
+                const CurrentOrderWidget(),
+              ],
+            ),
+          )
+        ],
+      ),
     );
   }
 
@@ -550,7 +584,7 @@ class HomeScreen extends StatelessWidget {
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  child: Text(
+                  child: const Text(
                     'Ok',
                     style: TextStyle(color: Colors.white),
                   )),
@@ -710,15 +744,11 @@ class CurrentOrderWidget extends StatelessWidget {
                   onPressed: () {
                     if (currentOrderController.orderItems.isNotEmpty) {
                       final ordersController = Get.put(OrdersController());
-
-                      // Assign order items and calculate totals
                       currentOrderController.updateTotals();
                       currentOrderController.currentOrder.update((order) {
                         order?.items =
                             currentOrderController.orderItems.toList();
                       });
-
-                      // Add order and show receipt dialog
                       ordersController
                           .addOrder(currentOrderController.currentOrder.value);
                       showDialog(

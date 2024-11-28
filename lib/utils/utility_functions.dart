@@ -1,4 +1,6 @@
 // ignore_for_file: prefer_const_constructors
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
@@ -16,10 +18,6 @@ class UtilityFunctions {
     Future<Box<int>> openIdBox() async {
       return await Hive.openBox<int>('lastOrderIdBox');
     }
-
-    final ByteData fontData = await rootBundle
-        .load('assets/fonts/Noto Nastaliq Urdu SemiBold - [UrduFonts.com].ttf');
-    final font = pw.Font.ttf(fontData);
 
     final idBox = await openIdBox();
     int lastOrderId = idBox.get('lastOrderId') ?? 0;
@@ -243,7 +241,7 @@ class UtilityFunctions {
                         pw.Text('Thanks for your order!',
                             textAlign: pw.TextAlign.center),
                         pw.Text(
-                          "Returns won't be allowed without receipt.", // Urdu text
+                          "Returns & Exchanges won't be allowed without receipt.", // Urdu text
                           style: pw.TextStyle(
                             fontSize:
                                 10, // Matches the font family in pubspec.yaml
@@ -275,5 +273,22 @@ class UtilityFunctions {
 
     await Printing.layoutPdf(
         onLayout: (PdfPageFormat format) async => pdf.save());
+  }
+
+  static double calculateProfitAfterDiscount(OrderModel order) {
+    // Calculate the subtotal by summing up the profit for each item
+    final subtotal = order.items.fold(
+        0.0,
+        (subtotal, item) =>
+            subtotal + (item.salePrice - item.retailPrice) * item.quantity);
+
+    // Calculate the discount amount based on the total amount of the order
+    final discountAmount = (order.discount / 100) * order.totalAmount;
+
+    // Calculate the profit after applying the discount
+    final profitAfterDiscount = subtotal - discountAmount;
+
+    // Return the profit after discount as a string with 2 decimal places
+    return profitAfterDiscount;
   }
 }

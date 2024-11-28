@@ -34,17 +34,23 @@ class AnalyticsScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 FilterButton(
-                  label: 'Profit',
-                  filterType: 'Profit',
-                  controller: controller,
-                ),
-                SizedBox(width: 8),
-                FilterButton(
                   label: 'Sales',
                   filterType: 'Sales',
                   controller: controller,
                 ),
-                SizedBox(width: 8),
+                const SizedBox(width: 8),
+                FilterButton(
+                  label: 'Purchases',
+                  filterType: 'Purchases',
+                  controller: controller,
+                ),
+                const SizedBox(width: 8),
+                FilterButton(
+                  label: 'Profit',
+                  filterType: 'Profit',
+                  controller: controller,
+                ),
+                const SizedBox(width: 8),
                 FilterButton(
                   label: 'Orders',
                   filterType: 'Orders',
@@ -73,7 +79,7 @@ class AnalyticsScreen extends StatelessWidget {
                 child: LineChart(
                   LineChartData(
                     gridData: const FlGridData(show: true),
-                    titlesData: FlTitlesData(
+                    titlesData: const FlTitlesData(
                       leftTitles: AxisTitles(
                         sideTitles: SideTitles(showTitles: true),
                       ),

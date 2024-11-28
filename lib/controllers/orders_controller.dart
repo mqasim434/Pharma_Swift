@@ -1,3 +1,4 @@
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:pharmacy_pos/controllers/products_controller.dart';
@@ -9,6 +10,8 @@ class OrdersController extends GetxController {
   final orders = <OrderModel>[].obs;
   final OrdersDBHelper dbHelper = OrdersDBHelper();
   var filteredOrders = <OrderModel>[].obs; // Filtered orders
+  var searchResults = <OrderModel>[].obs; // Filtered orders
+  RxBool isSearching = false.obs;
 
   final ProductsController productsController = Get.put(ProductsController());
 
@@ -20,7 +23,8 @@ class OrdersController extends GetxController {
 
   Future<void> _initialize() async {
     orders.value = await dbHelper.getAllOrders();
-    filteredOrders = orders;
+    filteredOrders.value = orders
+      ..sort((a, b) => a.orderDate.compareTo(b.orderDate));
   }
 
   Future<void> addOrder(OrderModel order) async {
@@ -29,9 +33,7 @@ class OrdersController extends GetxController {
         ProductModel? productModel = productsController.productList
             .firstWhereOrNull((element) => element.id == item.productId);
         if (productModel != null) {
-          // Calculate the updated units
           int updatedUnits = (productModel.availableUnits ?? 0) - item.quantity;
-          // Update the product in the database and productList
           productsController.updateAvailableUnitsAndPacks(
             productId: item.productId,
             updatedUnits: updatedUnits,
@@ -42,9 +44,20 @@ class OrdersController extends GetxController {
     await _initialize();
   }
 
-  Future<void> deleteOrder(String orderId) async {
-    await dbHelper.deleteOrder(orderId);
-    orders.removeWhere((order) => order.id == orderId);
+  Future<void> deleteOrder(OrderModel orderModel) async {
+    // Update the available units for each product in the order
+    for (var orderItem in orderModel.items) {
+      final ProductModel productModel = productsController.productList
+          .firstWhere((element) => orderItem.productId == element.id);
+      productsController.updateAvailableUnitsAndPacks(
+        productId: orderItem.productId,
+        updatedUnits: (productModel.availableUnits ?? 0) + orderItem.quantity,
+      );
+    }
+    // Delete the order from the database
+    await dbHelper.deleteOrder(orderModel.id);
+    // Reinitialize the order list to reflect changes
+    await _initialize();
   }
 
   Future<void> updateOrder(OrderModel updatedOrder) async {
@@ -53,6 +66,7 @@ class OrdersController extends GetxController {
     if (index != -1) {
       orders[index] = updatedOrder;
     }
+    await _initialize();
   }
 
   Future<OrderModel?> getOrderById(String orderId) {
@@ -64,6 +78,19 @@ class OrdersController extends GetxController {
       return DateFormat('yyyy-MM-dd').format(order.orderDate) ==
           DateFormat('yyyy-MM-dd').format(date);
     }).toList();
+  }
+
+  void searchOrders(String query) {
+    print("Searching for: $query");
+    if (query.isNotEmpty) {
+      isSearching.value = true;
+      searchResults.value = filteredOrders.where((order) {
+        return order.id.toString().toLowerCase().contains(query.toLowerCase());
+      }).toList();
+    } else {
+      isSearching.value = false;
+    }
+    print("Filtered Orders: ${filteredOrders.length}");
   }
 
   void clearFilters() {

@@ -23,58 +23,55 @@ class _ProductsScreenState extends State<ProductsScreen> {
         Get.put<ProductsController>(ProductsController());
     final FiltersController filtersController = Get.put(FiltersController());
 
+    TextEditingController searchController = TextEditingController();
+
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: MyColors.greenColor,
+        title: Row(
+          children: [
+            const Text(
+              'Products',
+              style: TextStyle(
+                fontSize: 32,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(width: 20),
+            SizedBox(
+              width: MediaQuery.of(context).size.width * 0.215,
+              height: 40,
+              child: TextFormField(
+                controller: searchController,
+                decoration: InputDecoration(
+                  hintText: 'Search an item...',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(0),
+                  ),
+                  filled: true,
+                  fillColor: Colors.white,
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 10),
+                ),
+                onChanged: (value) {
+                  if (value.isEmpty) {
+                    filtersController.switchSearchingStatus(false);
+                    filtersController
+                        .updateFilteredProducts(productsController.productList);
+                  } else {
+                    filtersController.switchSearchingStatus(true);
+                    filtersController.searchProducts(
+                        value, productsController.productList);
+                  }
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
       body: Column(
         children: [
           // Header Section
-          Container(
-            color: MyColors.greenColor,
-            height: MediaQuery.of(context).size.height * 0.09,
-            child: Center(
-              child: Row(
-                children: [
-                  const Padding(
-                    padding: EdgeInsets.only(left: 10),
-                    child: Text(
-                      'Products',
-                      style: TextStyle(
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 20),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.215,
-                    height: 40,
-                    child: TextFormField(
-                      decoration: InputDecoration(
-                        hintText: 'Search an item...',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(0),
-                        ),
-                        filled: true,
-                        fillColor: Colors.white,
-                        contentPadding:
-                            const EdgeInsets.symmetric(horizontal: 10),
-                      ),
-                      onChanged: (value) {
-                        if (value.isEmpty) {
-                          filtersController.switchSearchingStatus(false);
-                          filtersController.updateFilteredProducts(
-                              productsController.productList);
-                        } else {
-                          filtersController.switchSearchingStatus(true);
-                          filtersController.searchProducts(
-                              value, productsController.productList);
-                        }
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
+
           // Table Section
           Expanded(
             child: Column(
@@ -179,7 +176,11 @@ class _ProductsScreenState extends State<ProductsScreen> {
                                         product: product,
                                       );
                                     },
-                                  );
+                                  ).then((value) {
+                                    searchController.clear();
+                                    filtersController.searchProducts(
+                                        '', productsController.productList);
+                                  });
                                 },
                                 deleteProduct: () {
                                   showDialog(

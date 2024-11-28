@@ -7,8 +7,9 @@ import 'package:pharmacy_pos/screens/expiry_screen.dart';
 import 'package:pharmacy_pos/screens/orders_screen.dart';
 import 'package:pharmacy_pos/screens/home_screen.dart';
 import 'package:pharmacy_pos/screens/products_screen.dart';
+import 'package:pharmacy_pos/screens/purchase_screen.dart';
+import 'package:pharmacy_pos/screens/test_purchase_screen.dart';
 import 'package:pharmacy_pos/screens/sales_screen.dart';
-import 'package:pharmacy_pos/screens/settings_screen.dart';
 import 'package:pharmacy_pos/screens/stock_screen.dart';
 
 class SideNavController extends GetxController {
@@ -48,8 +49,14 @@ class SideNavController extends GetxController {
       case 'Expiry':
         _selectedPageIndex.value = 5;
         break;
-      case 'Analytics':
+      case 'Purchase':
         _selectedPageIndex.value = 6;
+        break;
+      case 'Test':
+        _selectedPageIndex.value = 7;
+        break;
+      case 'Analytics':
+        _selectedPageIndex.value = 8;
         break;
     }
 
@@ -75,6 +82,10 @@ class SideNavController extends GetxController {
       case 5:
         return 'Expiry';
       case 6:
+        return 'Purchase';
+      case 7:
+        return 'Test';
+      case 8:
         return 'Analytics';
       default:
         return 'Home';
@@ -88,6 +99,8 @@ class SideNavController extends GetxController {
     StockScreen(),
     SalesScreen(),
     ExpiryScreen(),
+    PurchaseScreen(),
+    TestPurchaseScreen(),
     AnalyticsScreen(),
   ].obs;
 

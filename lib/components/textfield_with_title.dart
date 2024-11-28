@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
 
 class TextFieldWithTitle extends StatelessWidget {
-  TextFieldWithTitle({
-    super.key,
-    required this.title,
-    required this.controller,
-    this.validator,
-    this.onChange,
-    this.isReadyOnly = false,
-  });
+  TextFieldWithTitle(
+      {super.key,
+      required this.title,
+      this.controller,
+      this.validator,
+      this.onChange,
+      this.isReadyOnly = false,
+      this.hint});
 
   final String title;
-  final TextEditingController controller;
+  final TextEditingController? controller;
   final FormFieldValidator<String>? validator;
   final Function(String)? onChange;
+  String? hint;
   bool isReadyOnly;
 
   @override
@@ -29,16 +30,16 @@ class TextFieldWithTitle extends StatelessWidget {
           width: screenWidth * 0.22,
           height: screenHeight * 0.08,
           child: TextFormField(
-            style: TextStyle(fontSize: 12),
+            style: const TextStyle(fontSize: 12),
             readOnly: isReadyOnly,
             controller: controller,
             decoration: InputDecoration(
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
               ),
-              hintText: 'Select $title',
-              contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
-              errorStyle: TextStyle(fontSize: 8),
+              hintText: hint?? 'Select $title',
+              contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+              errorStyle: const TextStyle(fontSize: 8),
             ),
             onChanged: onChange ?? (value) {},
             validator: validator ??

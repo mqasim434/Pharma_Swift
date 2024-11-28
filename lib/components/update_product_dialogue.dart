@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:pharmacy_pos/components/textfield_with_title.dart';
+import 'package:pharmacy_pos/controllers/filter_controller.dart';
 import 'package:pharmacy_pos/controllers/products_controller.dart';
 import 'package:pharmacy_pos/models/product_model.dart';
 import 'package:pharmacy_pos/utils/colors.dart';
@@ -119,20 +120,20 @@ class _UpdateProductDialogueState extends State<UpdateProductDialogue> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('Select Category:'),
+                            const Text('Select Category:'),
                             SizedBox(
                               width: screenWidth * 0.22,
                               height: screenHeight * 0.08,
                               child: DropdownButtonFormField<String>(
                                 value:
                                     productsController.selectedCategory.value,
-                                hint: Text('Select Category'),
+                                hint: const Text('Select Category'),
                                 decoration: InputDecoration(
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10),
                                   ),
-                                  contentPadding:
-                                      EdgeInsets.symmetric(horizontal: 10),
+                                  contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 10),
                                 ),
                                 items: categories.map((String category) {
                                   return DropdownMenuItem(
@@ -153,11 +154,12 @@ class _UpdateProductDialogueState extends State<UpdateProductDialogue> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('Is Single Unit'),
+                              const Text('Is Single Unit'),
                               Container(
                                 width: screenWidth * 0.22,
                                 height: screenHeight * 0.07,
-                                padding: EdgeInsets.symmetric(horizontal: 8),
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8),
                                 decoration: BoxDecoration(
                                     border: Border.all(color: Colors.grey),
                                     borderRadius: BorderRadius.circular(10)),
@@ -165,7 +167,7 @@ class _UpdateProductDialogueState extends State<UpdateProductDialogue> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text(
+                                    const Text(
                                       'Is Single Unit?',
                                       style: TextStyle(fontSize: 16),
                                     ),
@@ -213,7 +215,7 @@ class _UpdateProductDialogueState extends State<UpdateProductDialogue> {
                             controller: productsController.companyController,
                           ),
                           productsController.isSingleUnit.value
-                              ? SizedBox()
+                              ? const SizedBox()
                               : TextFieldWithTitle(
                                   title: 'Units per Pack',
                                   controller:
@@ -286,7 +288,7 @@ class _UpdateProductDialogueState extends State<UpdateProductDialogue> {
                                   },
                                 ),
                           productsController.isSingleUnit.value
-                              ? SizedBox()
+                              ? const SizedBox()
                               : TextFieldWithTitle(
                                   title: 'Available Packs',
                                   controller: productsController
@@ -326,7 +328,7 @@ class _UpdateProductDialogueState extends State<UpdateProductDialogue> {
                           ),
                           Obx(
                             () => productsController.isSingleUnit.value
-                                ? SizedBox()
+                                ? const SizedBox()
                                 : TextFieldWithTitle(
                                     title: 'Pack Purchase Price',
                                     controller: productsController
@@ -368,7 +370,7 @@ class _UpdateProductDialogueState extends State<UpdateProductDialogue> {
                       children: [
                         Obx(
                           () => productsController.isSingleUnit.value
-                              ? SizedBox()
+                              ? const SizedBox()
                               : TextFieldWithTitle(
                                   title: 'Pack Sale Price',
                                   controller: productsController
@@ -418,7 +420,7 @@ class _UpdateProductDialogueState extends State<UpdateProductDialogue> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('Expiry Date'),
+                            const Text('Expiry Date'),
                             SizedBox(
                               width: MediaQuery.of(context).size.width * 0.22,
                               height: MediaQuery.of(context).size.height * 0.08,
@@ -429,8 +431,8 @@ class _UpdateProductDialogueState extends State<UpdateProductDialogue> {
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10),
                                   ),
-                                  contentPadding:
-                                      EdgeInsets.symmetric(horizontal: 10),
+                                  contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 10),
                                   hintText: 'Select Expiry Date',
                                 ),
                                 readOnly: true,
@@ -458,7 +460,7 @@ class _UpdateProductDialogueState extends State<UpdateProductDialogue> {
                   ),
                 ],
               ),
-              SizedBox(
+              const SizedBox(
                 height: 10,
               ),
               ElevatedButton(
@@ -471,7 +473,7 @@ class _UpdateProductDialogueState extends State<UpdateProductDialogue> {
                   minimumSize: Size(screenWidth * 0.30, 50),
                   backgroundColor: MyColors.greenColor,
                 ),
-                child: Text(
+                child: const Text(
                   'Update Product',
                   style: TextStyle(color: Colors.white, fontSize: 18),
                 ),
