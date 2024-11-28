@@ -50,6 +50,7 @@ dependencies:
   collection: ^1.18.0
   printing: ^5.12.0
   pdf: ^3.11.1
+  uuid: ^4.5.1
 
 dev_dependencies:
   flutter_test:
@@ -92,9 +93,9 @@ flutter:
   # example:
 
   fonts:
-    - family: NotoNastaliqUrdu
+    - family: NooriFont
       fonts:
-        - asset: assets/fonts/Noto Nastaliq Urdu SemiBold - [UrduFonts.com].ttf
+        - asset: fonts/Jameel Noori Nastaleeq Regular.ttf
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages

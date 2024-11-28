@@ -8,6 +8,10 @@ class OrderFilterController extends GetxController {
     selectedDate.value = date;
   }
 
+  OrderFilterController() {
+    selectedDate.value = DateTime.now();
+  }
+
   List<OrderModel> filterOrders(List<OrderModel> orders) {
     if (selectedDate.value == null) {
       return orders;

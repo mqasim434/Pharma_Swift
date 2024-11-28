@@ -38,6 +38,20 @@ class OrderModel extends HiveObject {
     this.customerName,
     this.notes,
   });
+
+  // Deep copy method
+  OrderModel copy() {
+    return OrderModel(
+      id: id,
+      orderDate: orderDate,
+      items: items.map((item) => item.copy()).toList(),
+      totalAmount: totalAmount,
+      discount: discount,
+      netAmount: netAmount,
+      customerName: customerName,
+      notes: notes,
+    );
+  }
 }
 
 @HiveType(typeId: 3)
@@ -89,7 +103,24 @@ class OrderItem {
     required this.company,
   });
 
+  // Deep copy method
+  OrderItem copy() {
+    return OrderItem(
+      productId: productId,
+      name: name,
+      quantity: quantity,
+      retailPrice: retailPrice,
+      salePrice: salePrice,
+      totalPrice: totalPrice,
+      profit: profit,
+      category: category,
+      formula: formula,
+      strength: strength,
+      company: company,
+    );
+  }
+
   double getProfit() {
-    return salePrice - salePrice;
+    return salePrice - retailPrice;
   }
 }

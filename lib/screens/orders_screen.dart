@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:pharmacy_pos/components/receipt_dialogue.dart';
 import 'package:pharmacy_pos/components/table_cell.dart';
+import 'package:pharmacy_pos/components/update_order_dialogue.dart';
 import 'package:pharmacy_pos/controllers/orders_controller.dart';
 import 'package:pharmacy_pos/controllers/orders_filter_controller.dart';
 import 'package:pharmacy_pos/models/order_model.dart';
@@ -19,19 +20,18 @@ class _OrdersScreenState extends State<OrdersScreen> {
   String selectedFilter = "Today"; // Default filter
   DateTime? selectedDate;
 
+  final ordersController = Get.put(OrdersController());
+  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Header with Filter Options
-          Container(
-            color: MyColors.greenColor,
-            height: MediaQuery.of(context).size.height * 0.12,
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      appBar: AppBar(
+        backgroundColor: MyColors.greenColor,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
               children: [
                 const Text(
                   'Orders',
@@ -40,67 +40,88 @@ class _OrdersScreenState extends State<OrdersScreen> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    DropdownButton<String>(
-                      value: selectedFilter,
-                      items: const [
-                        DropdownMenuItem(value: "Today", child: Text("Today")),
-                        DropdownMenuItem(
-                            value: "Selected Date",
-                            child: Text("Selected Date")),
-                        DropdownMenuItem(
-                            value: "All Orders", child: Text("All Orders")),
-                      ],
-                      onChanged: (value) async {
-                        setState(() {
-                          selectedFilter = value!;
-                        });
-                        if (value == "Today") {
-                          selectedDate = null;
-                          Get.find<OrderFilterController>()
-                              .setDate(DateTime.now());
-                        } else if (value == "Selected Date") {
-                          DateTime? pickedDate = await showDatePicker(
-                            context: context,
-                            initialDate: DateTime.now(),
-                            firstDate: DateTime(2000),
-                            lastDate: DateTime.now(),
-                          );
-                          if (pickedDate != null) {
-                            setState(() {
-                              selectedDate = pickedDate;
-                            });
-                            Get.find<OrderFilterController>()
-                                .setDate(pickedDate);
-                          } else {
-                            setState(() {
-                              selectedFilter =
-                                  "Today"; // Revert if no date selected
-                            });
-                          }
-                        } else if (value == "All Orders") {
-                          selectedDate = null;
-                          Get.find<OrderFilterController>().setDate(null);
-                        }
-                      },
-                    ),
-                    if (selectedFilter == "Selected Date" &&
-                        selectedDate != null)
-                      Padding(
-                        padding: const EdgeInsets.only(left: 8.0),
-                        child: Text(
-                          "Selected: ${DateFormat('yyyy-MM-dd').format(selectedDate!)}",
-                          style: const TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold),
-                        ),
+                const SizedBox(width: 20),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.215,
+                  height: 40,
+                  child: TextFormField(
+                    decoration: InputDecoration(
+                      hintText: 'Search an item...',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(0),
                       ),
-                  ],
+                      filled: true,
+                      fillColor: Colors.white,
+                      contentPadding:
+                          const EdgeInsets.symmetric(horizontal: 10),
+                    ),
+                    onChanged: (value) {
+                      ordersController.searchOrders(value);
+                    },
+                  ),
                 ),
               ],
             ),
-          ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                DropdownButton<String>(
+                  value: selectedFilter,
+                  items: const [
+                    DropdownMenuItem(value: "Today", child: Text("Today")),
+                    DropdownMenuItem(
+                        value: "Selected Date", child: Text("Selected Date")),
+                    DropdownMenuItem(
+                        value: "All Orders", child: Text("All Orders")),
+                  ],
+                  onChanged: (value) async {
+                    setState(() {
+                      selectedFilter = value!;
+                    });
+                    if (value == "Today") {
+                      selectedDate = null;
+                      Get.find<OrderFilterController>().setDate(DateTime.now());
+                    } else if (value == "Selected Date") {
+                      DateTime? pickedDate = await showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime(2000),
+                        lastDate: DateTime.now(),
+                      );
+                      if (pickedDate != null) {
+                        setState(() {
+                          selectedDate = pickedDate;
+                        });
+                        Get.find<OrderFilterController>().setDate(pickedDate);
+                      } else {
+                        setState(() {
+                          selectedFilter =
+                              "Today"; // Revert if no date selected
+                        });
+                      }
+                    } else if (value == "All Orders") {
+                      selectedDate = null;
+                      Get.find<OrderFilterController>().setDate(null);
+                    }
+                  },
+                ),
+                if (selectedFilter == "Selected Date" && selectedDate != null)
+                  Padding(
+                    padding: const EdgeInsets.only(left: 8.0),
+                    child: Text(
+                      "Selected: ${DateFormat('yyyy-MM-dd').format(selectedDate!)}",
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+              ],
+            ),
+          ],
+        ),
+      ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
           // Table Content
           Expanded(
             child: Obx(() {
@@ -108,8 +129,10 @@ class _OrdersScreenState extends State<OrdersScreen> {
                   Get.put<OrdersController>(OrdersController());
               var orderFilterController =
                   Get.put<OrderFilterController>(OrderFilterController());
-              var filteredOrders = orderFilterController
-                  .filterOrders(ordersController.orders.reversed.toList());
+              var filteredOrders = ordersController.isSearching.value
+                  ? ordersController.searchResults
+                  : orderFilterController
+                      .filterOrders(ordersController.orders.reversed.toList());
               double totalProfit = filteredOrders.fold(
                   0.0,
                   (sum, order) =>
@@ -123,7 +146,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                 children: [
                   // Total Sale
                   Container(
-                    color: MyColors.greenColor,
+                    color: MyColors.darkGreyColor,
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: Row(
                       mainAxisSize: MainAxisSize.max,
@@ -164,7 +187,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                       4: FlexColumnWidth(2),
                       5: FlexColumnWidth(2),
                       6: FlexColumnWidth(2),
-                      7: FlexColumnWidth(1),
+                      7: FlexColumnWidth(2),
                     },
                     children: [
                       TableRow(
@@ -202,7 +225,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                                     4: FlexColumnWidth(2),
                                     5: FlexColumnWidth(2),
                                     6: FlexColumnWidth(2),
-                                    7: FlexColumnWidth(1),
+                                    7: FlexColumnWidth(2),
                                   },
                                   children: [
                                     TableRow(
@@ -217,7 +240,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                                           );
                                         }),
                                         tableCell(
-                                            DateFormat('dd/M/yy, h:mm:ss a')
+                                            DateFormat('dd/MMM/yy, h:mm:ss a')
                                                 .format(order.orderDate)),
                                         tableCell(order.totalAmount
                                             .toStringAsFixed(2)),
@@ -241,8 +264,8 @@ class _OrdersScreenState extends State<OrdersScreen> {
                                         ),
                                         tableCell(
                                           'Actions',
-                                          hasOrderActions: true,
-                                          viewOrder: () {
+                                          hasProductActions: true,
+                                          viewProduct: () {
                                             showDialog(
                                                 context: context,
                                                 builder: (context) {
@@ -250,7 +273,16 @@ class _OrdersScreenState extends State<OrdersScreen> {
                                                       order: order);
                                                 });
                                           },
-                                          deleteOrder: () {
+                                          editProduct: () {
+                                            showDialog(
+                                                context: context,
+                                                builder: (context) {
+                                                  return UpdateOrderDialogue(
+                                                    orderModel: order.copy(),
+                                                  );
+                                                });
+                                          },
+                                          deleteProduct: () {
                                             showDialog(
                                               context: context,
                                               builder: (context) {
@@ -280,9 +312,8 @@ class _OrdersScreenState extends State<OrdersScreen> {
                                                                     .greenColor),
                                                         onPressed: () {
                                                           ordersController
-                                                              .deleteOrder(order
-                                                                  .id
-                                                                  .toString());
+                                                              .deleteOrder(
+                                                                  order);
                                                           Navigator.pop(
                                                               context);
                                                         },
@@ -422,7 +453,7 @@ void showOrderItemsDialog(BuildContext context, List<OrderItem> orderItems) {
                           ),
                         ],
                       );
-                    }).toList(),
+                    }),
                   ],
                 ),
               ],

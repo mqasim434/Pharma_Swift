@@ -89,7 +89,7 @@ class _CartItemWidgetState extends State<CartItemWidget> {
                   ),
                   const SizedBox(height: 5),
                   Text(
-                    'Unit: \$${widget.price.toStringAsFixed(2)}',
+                    'Unit: \$${widget.price}',
                     style: const TextStyle(
                       fontSize: 14,
                       color: Colors.black,

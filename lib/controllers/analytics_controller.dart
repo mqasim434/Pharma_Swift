@@ -1,14 +1,19 @@
 import 'package:get/get.dart';
 import 'package:pharmacy_pos/controllers/orders_controller.dart';
+import 'package:pharmacy_pos/controllers/purchase_controller.dart';
 import 'package:pharmacy_pos/models/order_model.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
+import 'package:pharmacy_pos/models/purchase_model.dart';
+import 'package:pharmacy_pos/utils/utility_functions.dart';
 
 class AnalyticsController extends GetxController {
   // Reference to OrdersController to access the orders
   final OrdersController ordersController =
       Get.put<OrdersController>(OrdersController());
-  RxString selectedFilter = 'Profit'.obs;
+  final PurchaseController purchaseController =
+      Get.put<PurchaseController>(PurchaseController());
+  RxString selectedFilter = 'Sales'.obs;
   var selectedDate = DateTime.now().obs; // Make selectedDate reactive
 
   // Get the orders for the selected month and year
@@ -39,6 +44,39 @@ class AnalyticsController extends GetxController {
       int day = entry.key + 1;
       double sales = entry.value;
       return FlSpot(day.toDouble(), sales);
+    }).toList();
+  }
+
+  List<FlSpot> getPurchasesData() {
+    // Get all purchases for the selected month and year
+    List<PurchaseModel> purchases =
+        purchaseController.purchases.where((purchase) {
+      final purchaseDate = purchase.purchaseDate;
+      return purchaseDate != null &&
+          DateFormat('dd/MM/yyyy').parse(purchaseDate).month ==
+              selectedDate.value.month &&
+          DateFormat('dd/MM/yyyy').parse(purchaseDate).year ==
+              selectedDate.value.year;
+    }).toList();
+
+    // Initialize daily purchases list with zeros
+    List<double> dailyPurchases = List.filled(31, 0); // Max days in a month
+
+    // Aggregate purchase amounts for each day
+    for (var purchase in purchases) {
+      int day =
+          DateFormat('dd/MM/yyyy').parse(purchase.purchaseDate.toString()).day;
+      double amount = purchase.isSingleUnit
+          ? purchase.availableUnits! * purchase.unitPurchasePrice!
+          : (purchase.availablePacks! * purchase.packPurchasePrice!);
+      dailyPurchases[day - 1] += amount;
+    }
+
+    // Convert daily purchases into FlSpot data points
+    return dailyPurchases.asMap().entries.map((entry) {
+      int day = entry.key + 1;
+      double amount = entry.value;
+      return FlSpot(day.toDouble(), amount);
     }).toList();
   }
 
@@ -73,11 +111,7 @@ class AnalyticsController extends GetxController {
     for (var order in orders) {
       int day = order.orderDate.day;
       // Using fold to accumulate profit from all items in the order
-      double totalProfit = order.items.fold(0.0, (acc, item) {
-        // Use the profit from each item in the order
-        double itemProfit = item.profit * item.quantity;
-        return acc + itemProfit - ((order.discount / 100) * order.totalAmount);
-      });
+      double totalProfit = UtilityFunctions.calculateProfitAfterDiscount(order);
       dailyProfit[day - 1] += totalProfit;
     }
 
@@ -97,6 +131,8 @@ class AnalyticsController extends GetxController {
         return getSalesData();
       case 'Orders':
         return getOrderData();
+      case 'Purchases':
+        return getPurchasesData();
       default:
         return [];
     }

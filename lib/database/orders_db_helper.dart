@@ -1,3 +1,4 @@
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:pharmacy_pos/models/order_model.dart';

@@ -12,8 +12,7 @@ class SideNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    final SideNavController sideNavController =
-        Get.find(); // Access the existing controller
+    final SideNavController sideNavController = Get.find();
 
     return Container(
       color: MyColors.darkGreyColor,
@@ -60,7 +59,7 @@ class SideNavBar extends StatelessWidget {
               )),
           Obx(() => NavItemWidget(
                 label: 'Orders',
-                icon: Icons.history,
+                icon: Icons.list_alt,
                 isSelected:
                     sideNavController.selectedItemLabel.value == 'Orders',
                 onTap: () {
@@ -103,9 +102,28 @@ class SideNavBar extends StatelessWidget {
                   sideNavController.changeSelectedLabel('Expiry');
                 },
               )),
+          Obx(
+            () => NavItemWidget(
+              label: 'Purchase',
+              icon: Icons.assignment,
+              isSelected:
+                  sideNavController.selectedItemLabel.value == 'Purchase',
+              onTap: () {
+                sideNavController.changeSelectedLabel('Purchase');
+              },
+            ),
+          ),
+          // Obx(() => NavItemWidget(
+          //       label: 'Test',
+          //       icon: Icons.event,
+          //       isSelected: sideNavController.selectedItemLabel.value == 'Test',
+          //       onTap: () {
+          //         sideNavController.changeSelectedLabel('Test');
+          //       },
+          //     )),
           Obx(() => NavItemWidget(
                 label: 'Analytics',
-                icon: Icons.settings,
+                icon: Icons.trending_up,
                 isSelected:
                     sideNavController.selectedItemLabel.value == 'Analytics',
                 onTap: () {

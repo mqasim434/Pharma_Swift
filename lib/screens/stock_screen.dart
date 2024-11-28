@@ -116,7 +116,10 @@ class StockScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text(
           "Low Stock Alerts",
-          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+          style: TextStyle(
+            fontSize: 32,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         actions: [
           IconButton(

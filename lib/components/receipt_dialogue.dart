@@ -84,7 +84,7 @@ class ReceiptDialog extends StatelessWidget {
                             child: Text('${item.quantity}',
                                 style: const TextStyle(fontSize: 12))),
                         Expanded(
-                            child: Text('${item.salePrice}',
+                            child: Text('${item.salePrice.toStringAsFixed(2)}',
                                 style: const TextStyle(fontSize: 12))),
                         Expanded(
                             child: Text(total.toStringAsFixed(2),
@@ -138,7 +138,9 @@ class ReceiptDialog extends StatelessWidget {
         TextButton(
           style: TextButton.styleFrom(backgroundColor: MyColors.greenColor),
           onPressed: () {
-            UtilityFunctions.printReceipt(order, context);
+            UtilityFunctions.printReceipt(order, context).then((value) {
+              Navigator.pop(context);
+            });
           },
           child: const Text(
             'Print',
